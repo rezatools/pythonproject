@@ -1,0 +1,20 @@
+[project]
+name = "python-starter-project"
+version = "0.1.0"
+description = "A Python starter library using uv, devcontainers, and VS Code"
+authors = [{ name = "Your Name", email = "you@example.com" }]
+requires-python = ">=3.10"
+dependencies = [
+    "polars",
+    "pyodbc",
+    "duckdb",
+    "azure-identity",
+    "azure-storage-blob"
+]
+
+[tool.uv]
+venv = ".venv"
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"

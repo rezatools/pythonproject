@@ -1,0 +1,19 @@
+# Ignore everything except what's needed for build context
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+*.swp
+*.swo
+*.DS_Store
+
+# Keep dependency files
+!pyproject.toml
+!uv.lock
+
+# Keep source & config
+!src/**
+!scripts/**
+!configs/**
+!README.md
+!LICENSE

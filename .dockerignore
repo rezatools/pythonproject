@@ -10,6 +10,7 @@
 # Keep dependency files
 !pyproject.toml
 !uv.lock
+!.python-version
 
 # Keep source & config
 !src/**

@@ -2,50 +2,59 @@
 
 FROM debian:bookworm-slim
 
-# Avoid prompts from apt
 ENV DEBIAN_FRONTEND=noninteractive
+ENV PATH="/workspaces/.venv/bin:/home/vscode/.cargo/bin:$PATH"
 
 # Install base dependencies
 RUN apt-get update && apt-get install -y \
-    curl gnupg apt-transport-https software-properties-common \
-    unixodbc-dev libgssapi-krb5-2 libssl3 \
+    curl \
+    build-essential \
+    git \
+    ca-certificates \
+    gnupg \
+    apt-transport-https \
+    software-properties-common \
+    unixodbc-dev \
+    libgssapi-krb5-2 \
     && rm -rf /var/lib/apt/lists/*
 
-# Install SQL Server ODBC 18 Driver
-RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
-    curl https://packages.microsoft.com/config/debian/12/prod.list \
-      > /etc/apt/sources.list.d/mssql-release.list && \
-    apt-get update && ACCEPT_EULA=Y apt-get install -y msodbcsql18
+# Import Microsoft GPG key
+RUN curl -fsSL https://packages.microsoft.com/keys/microsoft.asc \
+    | gpg --dearmor \
+    | tee /usr/share/keyrings/microsoft-prod.gpg > /dev/null
 
-# Install Azure CLI
-RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+# Add Microsoft repo for correct architecture
+RUN arch=$(dpkg --print-architecture) && \
+    echo "deb [arch=${arch} signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/debian/12/prod bookworm main" \
+    | tee /etc/apt/sources.list.d/microsoft-prod.list
 
-# Install uv
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+# Install ODBC Driver 18 and Azure CLI
+RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
+    msodbcsql18 \
+    azure-cli \
+    && rm -rf /var/lib/apt/lists/*
 
-# Create vscode user
+# Create vscode user and workspace
 RUN useradd -ms /bin/bash vscode && \
     mkdir -p /workspaces && \
     chown -R vscode:vscode /workspaces
 
-# Switch to vscode user
 USER vscode
 WORKDIR /workspaces
 
-# Install Python 3.10 via uv and set up venv
-RUN ~/.cargo/bin/uv python install 3.10 && \
-    ~/.cargo/bin/uv venv /workspaces/.venv
-
-ENV PATH="/workspaces/.venv/bin:$PATH"
-
-# Copy dependency files first (safe for missing uv.lock)
-COPY --chown=vscode:vscode pyproject.toml uv.lock* ./
-
-# Install dependencies
-RUN ~/.cargo/bin/uv sync || true
-
+# Install uv and Python 3.10 in one shot
+# Install uv as root into /home/vscode/.cargo/bin
+RUN export HOME=/home/vscode && \
+    curl -LsSf https://astral.sh/uv/install.sh | sh && \
+    /home/vscode/.cargo/bin/uv --version && \
+    /home/vscode/.cargo/bin/uv python install 3.10 && \
+    /home/vscode/.cargo/bin/uv venv /workspaces/.venv --python 3.10 && \
+    chown -R vscode:vscode /home/vscode /workspaces
+    
 # Copy project files
 COPY --chown=vscode:vscode . .
 
-# Default shell
+# Install dependencies if pyproject.toml exists
+RUN if [ -f pyproject.toml ]; then /home/vscode/.cargo/bin/uv sync; fi
+
 CMD [ "bash" ]

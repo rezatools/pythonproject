@@ -1,26 +1,29 @@
 {
-  "name": "pythonproject",
-  "dockerFile": "Dockerfile",
+  "name": "Python UV Devcontainer",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "runArgs": ["--platform=linux/amd64"],
   "remoteUser": "vscode",
-  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "workspaceFolder": "/workspaces",
+  "features": {},
   "customizations": {
     "vscode": {
       "extensions": [
         "ms-python.python",
         "ms-python.vscode-pylance",
-        "charliermarsh.ruff",
-        "ms-azuretools.vscode-azurestorage",
-        "ms-azuretools.vscode-azurecli"
+        "ms-azuretools.vscode-docker"
       ],
       "settings": {
-        "python.defaultInterpreterPath": "/workspaces/${localWorkspaceFolderBasename}/.venv/bin/python",
-        "python.venvPath": "/workspaces/${localWorkspaceFolderBasename}",
-        "python.terminal.activateEnvironment": true
+        "python.defaultInterpreterPath": "/workspaces/.venv/bin/python",
+        "python.terminal.activateEnvironment": true,
+        "python.terminal.activateEnvInCurrentTerminal": true
       }
     }
   },
+  "postCreateCommand": "if [ -f pyproject.toml ]; then ~/.cargo/bin/uv sync; fi",
   "mounts": [
-    "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind,consistency=cached"
-  ],
-  "postCreateCommand": "uv sync"
+    "source=${localWorkspaceFolder},target=/workspaces,type=bind,consistency=cached"
+  ]
 }

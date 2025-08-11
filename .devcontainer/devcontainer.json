@@ -4,7 +4,7 @@
     "dockerfile": "Dockerfile",
     "context": "..",
     "args": {
-      "PYTHON_VERSION": "3.10"
+      "PYTHON_VERSION": "${localEnv:PYTHON_VERSION:3.10}"
     }
   },
 
@@ -25,7 +25,10 @@
       }
     }
   },
-  "postCreateCommand": "sudo chown -R vscode:vscode /workspaces/pythonproject/.venv || true && uv venv && uv sync --dev",
+  "containerEnv": {
+    "PYTHON_VERSION": "${localEnv:PYTHON_VERSION:3.10}"
+  },
+  "postCreateCommand": "sudo chown -R vscode:vscode /workspaces/pythonproject/.venv || true && uv venv --python $PYTHON_VERSION && uv sync --dev",
   "mounts": [
     "source=${localWorkspaceFolder},target=/workspaces/pythonproject,type=bind",
     "target=/workspaces/pythonproject/.venv,type=volume"

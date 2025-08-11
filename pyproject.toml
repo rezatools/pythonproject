@@ -13,7 +13,8 @@ dependencies = [
 ]
 
 [tool.uv]
-venv = ".venv"
+# Removed unsupported `venv` key
+# venv = ".venv"
 # Dev dependencies used during development and CI
 dev-dependencies = [
     "pytest>=8.0.0",

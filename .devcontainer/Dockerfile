@@ -3,20 +3,25 @@
 FROM debian:bookworm-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV PATH="/workspaces/.venv/bin:/home/vscode/.cargo/bin:$PATH"
+#ENV PATH="/workspaces/.venv/bin:/home/vscode/.cargo/bin:$PATH"
 
-# Install base dependencies
-RUN apt-get update && apt-get install -y \
+
+# Install system dependencies for uv, pyodbc, polars, duckdb, requests, and ODBC Driver 18 for SQL Server
+RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
-    build-essential \
-    git \
-    ca-certificates \
+    unzip \
     gnupg \
-    apt-transport-https \
-    software-properties-common \
+    ca-certificates \
+    build-essential \
+    pkg-config \
+    unixodbc \
     unixodbc-dev \
-    libgssapi-krb5-2 \
+    libpq-dev \
+    libssl-dev \
+    libcurl4-openssl-dev \
+    libxml2-dev \
     && rm -rf /var/lib/apt/lists/*
+
 
 # Import Microsoft GPG key
 RUN curl -fsSL https://packages.microsoft.com/keys/microsoft.asc \
@@ -42,19 +47,21 @@ RUN useradd -ms /bin/bash vscode && \
 USER vscode
 WORKDIR /workspaces
 
-# Install uv and Python 3.10 in one shot
-# Install uv as root into /home/vscode/.cargo/bin
-RUN export HOME=/home/vscode && \
-    curl -LsSf https://astral.sh/uv/install.sh | sh && \
-    /home/vscode/.cargo/bin/uv --version && \
-    /home/vscode/.cargo/bin/uv python install 3.10 && \
-    /home/vscode/.cargo/bin/uv venv /workspaces/.venv --python 3.10 && \
-    chown -R vscode:vscode /home/vscode /workspaces
-    
-# Copy project files
-COPY --chown=vscode:vscode . .
+ENV PATH=/venv/bin:$PATH
+ENV PATH=/root/.cargo/bin:$PATH
+ENV PATH="/root/.local/bin/:$PATH"
 
-# Install dependencies if pyproject.toml exists
-RUN if [ -f pyproject.toml ]; then /home/vscode/.cargo/bin/uv sync; fi
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# set up a virtual env to use for whatever app is destined for this container.
+# RUN uv venv --python 3.12.5 --seed /venv
+RUN uv venv --python 3.10 /venv
+
+RUN echo "\nsource /venv/bin/activate\n" >> /root/.zshrc
+RUN uv --version
+
+RUN echo "We're good:"
+RUN /venv/bin/python --version
 
 CMD [ "bash" ]
+

@@ -8,9 +8,9 @@
     }
   },
 
-  "runArgs": ["--platform=linux/amd64","--network=host"],
+  "runArgs": ["--platform=linux/amd64"],
   "remoteUser": "vscode",
-  "workspaceFolder": "/workspaces/pythonproject",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "features": {},
   "customizations": {
     "vscode": {
@@ -20,7 +20,7 @@
         "ms-azuretools.vscode-docker"
       ],
       "settings": {
-        "python.defaultInterpreterPath": "/workspaces/pythonproject/.venv/bin/python",
+        "python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
         "python.terminal.activateEnvironment": true,
         "python.terminal.activateEnvInCurrentTerminal": true
       }
@@ -31,6 +31,6 @@
   },
   "postCreateCommand": "uv venv --python $PYTHON_VERSION && uv sync --dev",
   "mounts": [
-    "source=${localWorkspaceFolder},target=/workspaces/pythonproject,type=bind"
+    "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind"
   ]
 }

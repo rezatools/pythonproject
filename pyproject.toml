@@ -14,6 +14,10 @@ dependencies = [
 
 [tool.uv]
 venv = ".venv"
+# Dev dependencies used during development and CI
+dev-dependencies = [
+    "pytest>=8.0.0",
+]
 
 [tool.ruff]
 line-length = 88

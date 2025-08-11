@@ -26,9 +26,11 @@
       }
     }
   },
+  "containerEnv": {
+    "PYTHON_VERSION": "3.10"
+  },
   "postCreateCommand": "uv venv --python $PYTHON_VERSION && uv sync --dev",
   "mounts": [
-    "source=${localWorkspaceFolder},target=/workspaces/pythonproject,type=bind",
-    "target=/workspaces/pythonproject/.venv,type=volume"
+    "source=${localWorkspaceFolder},target=/workspaces/pythonproject,type=bind"
   ]
 }

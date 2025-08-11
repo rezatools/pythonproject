@@ -49,16 +49,11 @@ WORKDIR /workspaces
 
 # Install uv as vscode user
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+# Ensure uv is available on PATH for non-interactive shells
+ENV PATH="/home/vscode/.local/bin:$PATH"
 
-# Create venv in vscode home (writable by vscode)
-RUN uv venv --python 3.10 /home/vscode/.venv
-ENV PATH="/home/vscode/.venv/bin:$PATH"
-#add config to automatically use venv with new shell
-RUN echo "source /home/vscode/.venv/bin/activate" >> /home/vscode/.bashrc
+# Verify uv install
 RUN uv --version
-
-RUN echo "We're good:"
-RUN /home/vscode/.venv/bin/python --version
 
 CMD [ "bash" ]
 

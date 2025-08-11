@@ -1,21 +1,75 @@
-# Ignore everything except what's needed for build context
-**/__pycache__/
-**/*.pyc
-**/*.pyo
-**/*.pyd
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
 *.swp
 *.swo
-*.DS_Store
+*~
 
-# Keep dependency files
-!pyproject.toml
-!uv.lock
-!.python-version
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
-# Keep source & config
-!python_starter_project/**
-!tests/**
-!scripts/**
-!configs/**
-!README.md
-!LICENSE
+# Git
+.git/
+.gitignore
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Logs
+*.log
+
+# Local configuration
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# uv
+.uv/
+uv.lock

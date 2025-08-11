@@ -4,7 +4,8 @@
     "dockerfile": "Dockerfile",
     "context": "..",
     "args": {
-      "PYTHON_VERSION": "3.10"
+      "PYTHON_VERSION": "3.10",
+      "UV_VERSION": "0.8.7"
     }
   },
 
@@ -16,17 +17,25 @@
       "extensions": [
         "ms-python.python",
         "ms-python.vscode-pylance",
-        "ms-azuretools.vscode-docker"
+        "ms-azuretools.vscode-docker",
+        "charliermarsh.ruff"
       ],
       "settings": {
         "python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
         "python.terminal.activateEnvironment": true,
-        "python.terminal.activateEnvInCurrentTerminal": true
+        "python.terminal.activateEnvInCurrentTerminal": true,
+        "python.linting.enabled": true,
+        "python.linting.ruffEnabled": true,
+        "python.formatting.provider": "ruff",
+        "python.analysis.typeCheckingMode": "basic"
       }
     }
   },
   "containerEnv": {
-    "PYTHON_VERSION": "3.10"
+    "PYTHON_VERSION": "3.10",
+    "UV_VERSION": "0.8.7",
+    "UV_CACHE_DIR": "/tmp/uv-cache"
   },
-  "postCreateCommand": "uv venv --python $PYTHON_VERSION && uv sync --dev"
+  "postCreateCommand": "uv venv --python 3.10 && uv sync --dev",
+  "postStartCommand": "uv sync --dev"
 }

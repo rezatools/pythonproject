@@ -13,7 +13,8 @@
 !.python-version
 
 # Keep source & config
-!src/**
+!python_starter_project/**
+!tests/**
 !scripts/**
 !configs/**
 !README.md

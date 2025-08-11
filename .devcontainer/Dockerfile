@@ -47,21 +47,19 @@ RUN useradd -ms /bin/bash vscode && \
 USER vscode
 WORKDIR /workspaces
 
-ENV PATH=/venv/bin:$PATH
-ENV PATH=/root/.cargo/bin:$PATH
-ENV PATH="/root/.local/bin/:$PATH"
-
+# Install uv as vscode user
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# set up a virtual env to use for whatever app is destined for this container.
-# RUN uv venv --python 3.12.5 --seed /venv
-RUN uv venv --python 3.10 /venv
-
-RUN echo "\nsource /venv/bin/activate\n" >> /root/.zshrc
+# Create venv in vscode home (writable by vscode)
+RUN uv venv --python 3.10 /home/vscode/.venv
+ENV PATH="/home/vscode/.venv/bin:$PATH"
+#add config to automatically use venv with new shell
+RUN echo "source /home/vscode/.venv/bin/activate" >> /home/vscode/.bashrc
 RUN uv --version
 
 RUN echo "We're good:"
-RUN /venv/bin/python --version
+RUN /home/vscode/.venv/bin/python --version
 
 CMD [ "bash" ]
+
 

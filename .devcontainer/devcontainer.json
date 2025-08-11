@@ -2,11 +2,15 @@
   "name": "Python UV Devcontainer",
   "build": {
     "dockerfile": "Dockerfile",
-    "context": ".."
+    "context": "..",
+    "args": {
+      "PYTHON_VERSION": "3.10"
+    }
   },
-  "runArgs": ["--platform=linux/amd64"],
+
+  "runArgs": ["--platform=linux/amd64","--network=host"],
   "remoteUser": "vscode",
-  "workspaceFolder": "/workspaces",
+  "workspaceFolder": "/workspaces/pythonproject",
   "features": {},
   "customizations": {
     "vscode": {
@@ -16,14 +20,15 @@
         "ms-azuretools.vscode-docker"
       ],
       "settings": {
-        "python.defaultInterpreterPath": "/workspaces/.venv/bin/python",
+        "python.defaultInterpreterPath": "/workspaces/pythonproject/.venv/bin/python",
         "python.terminal.activateEnvironment": true,
         "python.terminal.activateEnvInCurrentTerminal": true
       }
     }
   },
-  "postCreateCommand": "if [ -f pyproject.toml ]; then ~/.cargo/bin/uv sync; fi",
+  "postCreateCommand": "uv venv --python $PYTHON_VERSION && uv sync --dev",
   "mounts": [
-    "source=${localWorkspaceFolder},target=/workspaces,type=bind,consistency=cached"
+    "source=${localWorkspaceFolder},target=/workspaces/pythonproject,type=bind",
+    "target=/workspaces/pythonproject/.venv,type=volume"
   ]
 }

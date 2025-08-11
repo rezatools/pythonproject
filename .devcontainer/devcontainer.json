@@ -8,7 +8,6 @@
     }
   },
 
-  "runArgs": ["--platform=linux/amd64"],
   "remoteUser": "vscode",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "features": {},
@@ -29,8 +28,5 @@
   "containerEnv": {
     "PYTHON_VERSION": "3.10"
   },
-  "postCreateCommand": "uv venv --python $PYTHON_VERSION && uv sync --dev",
-  "mounts": [
-    "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind"
-  ]
+  "postCreateCommand": "uv venv --python $PYTHON_VERSION && uv sync --dev"
 }

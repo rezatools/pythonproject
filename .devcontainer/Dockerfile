@@ -33,11 +33,16 @@ RUN arch=$(dpkg --print-architecture) && \
     echo "deb [arch=${arch} signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/debian/12/prod bookworm main" \
     | tee /etc/apt/sources.list.d/microsoft-prod.list
 
-# Install ODBC Driver 18 and Azure CLI
-RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
-    msodbcsql18 \
-    azure-cli \
-    && rm -rf /var/lib/apt/lists/*
+# Install Azure CLI; install msodbcsql18 only if available for the architecture
+RUN set -eux; \
+    apt-get update; \
+    ACCEPT_EULA=Y apt-get install -y azure-cli || true; \
+    if apt-cache show msodbcsql18 2>/dev/null | grep -q "^Version:"; then \
+        ACCEPT_EULA=Y apt-get install -y msodbcsql18; \
+    else \
+        echo "msodbcsql18 not available for $(dpkg --print-architecture); skipping."; \
+    fi; \
+    rm -rf /var/lib/apt/lists/*
 
 # Create vscode user and workspace
 RUN useradd -ms /bin/bash vscode && \

@@ -8,7 +8,6 @@
     }
   },
 
-  "runArgs": ["--platform=linux/amd64","--network=host"],
   "remoteUser": "vscode",
   "workspaceFolder": "/workspaces/pythonproject",
   "features": {},
@@ -26,7 +25,7 @@
       }
     }
   },
-  "postCreateCommand": "uv venv --python $PYTHON_VERSION && uv sync --dev",
+  "postCreateCommand": "sudo chown -R vscode:vscode /workspaces/pythonproject/.venv || true && uv venv && uv sync --dev",
   "mounts": [
     "source=${localWorkspaceFolder},target=/workspaces/pythonproject,type=bind",
     "target=/workspaces/pythonproject/.venv,type=volume"
